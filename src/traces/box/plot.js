@@ -78,10 +78,91 @@ module.exports = function plot(gd, plotinfo, cdbox) {
         // repeatable pseudorandom number generator
         seed();
 
+        d3.select(this).selectAll('path.box')
+        .data(Lib.identity)
+        .enter()
+        .append('path').each(function(d) {
+            var posc = posAxis.c2p(d.pos + bPos, true),
+            pos0 = posAxis.c2p(d.pos + bPos - bdPos, true),
+            pos1 = posAxis.c2p(d.pos + bPos + bdPos, true),
+            posw0 = posAxis.c2p(d.pos + bPos - wdPos, true),
+            posw1 = posAxis.c2p(d.pos + bPos + wdPos, true),
+            q1 = valAxis.c2p(d.q1, true),
+            q3 = valAxis.c2p(d.q3, true),
+            // make sure median isn't identical to either of the
+            // quartiles, so we can see it
+            m = Lib.constrain(valAxis.c2p(d.med, true),
+                Math.min(q1, q3) + 1, Math.max(q1, q3) - 1),
+            lf = valAxis.c2p(trace.boxpoints === false ? d.min : d.lf, true),
+            uf = valAxis.c2p(trace.boxpoints === false ? d.max : d.uf, true);
+
+            d3.select(this).attr('d',
+              'M' + pos0 + ',' + q1 + 'H' + pos1 + 'V' + m + 'H' + pos0 + 'Z') // box
+              .style('fill', fullLayout.bottomColor);
+        });
+
+        d3.select(this).selectAll('path.box')
+        .data(Lib.identity)
+        .enter()
+        .append('path').each(function(d) {
+            var posc = posAxis.c2p(d.pos + bPos, true),
+            pos0 = posAxis.c2p(d.pos + bPos - bdPos, true),
+            pos1 = posAxis.c2p(d.pos + bPos + bdPos, true),
+            posw0 = posAxis.c2p(d.pos + bPos - wdPos, true),
+            posw1 = posAxis.c2p(d.pos + bPos + wdPos, true),
+            q1 = valAxis.c2p(d.q1, true),
+            q3 = valAxis.c2p(d.q3, true),
+            // make sure median isn't identical to either of the
+            // quartiles, so we can see it
+            m = Lib.constrain(valAxis.c2p(d.med, true),
+                Math.min(q1, q3) + 1, Math.max(q1, q3) - 1),
+            lf = valAxis.c2p(trace.boxpoints === false ? d.min : d.lf, true),
+            uf = valAxis.c2p(trace.boxpoints === false ? d.max : d.uf, true);
+
+            d3.select(this).attr('d',
+              'M' + pos0 + ',' + q3 + 'H' + pos1 + 'V' + m + 'H' + pos0 + 'Z') // box
+              .style('fill', fullLayout.topColor);
+        });
+
+        d3.select(this).selectAll('path.box')
+        .data(Lib.identity)
+        .enter()
+        .append('path').each(function(d) {
+            var posc = posAxis.c2p(d.pos + bPos, true),
+            pos0 = posAxis.c2p(d.pos + bPos - bdPos, true),
+            pos1 = posAxis.c2p(d.pos + bPos + bdPos, true),
+            posw0 = posAxis.c2p(d.pos + bPos - wdPos, true),
+            posw1 = posAxis.c2p(d.pos + bPos + wdPos, true),
+            q1 = valAxis.c2p(d.q1, true),
+            q3 = valAxis.c2p(d.q3, true),
+            // make sure median isn't identical to either of the
+            // quartiles, so we can see it
+            m = Lib.constrain(valAxis.c2p(d.med, true),
+                Math.min(q1, q3) + 1, Math.max(q1, q3) - 1),
+            lf = valAxis.c2p(trace.boxpoints === false ? d.min : d.lf, true),
+            uf = valAxis.c2p(trace.boxpoints === false ? d.max : d.uf, true);
+            var STAR_WIDTH = 6;
+            var middle = pos0 + ((pos1 - pos0) / 2);
+            var topX = middle;
+            var topY = m - STAR_WIDTH;
+            var rightX = middle + STAR_WIDTH;
+            var rightY = m;
+            var bottomX = middle;
+            var bottomY = m + STAR_WIDTH;
+            var leftX = middle - STAR_WIDTH;
+            var leftY = m;
+
+            d3.select(this).attr('d',
+              'M' + leftX + ',' + leftY + 'L' + topX + ',' + topY + 'L' + rightX + ',' + rightY + 'L' + bottomX + ',' + bottomY + 'L' + leftX + ',' + leftY
+              ).style('fill', fullLayout.medianColor)
+              .style('stroke', fullLayout.medianColor);
+        });
+
         // boxes and whiskers
         d3.select(this).selectAll('path.box')
             .data(Lib.identity)
-            .enter().append('path')
+            .enter()
+            .append('path')
             .attr('class', 'box')
             .each(function(d) {
                 var posc = posAxis.c2p(d.pos + bPos, true),
@@ -97,6 +178,7 @@ module.exports = function plot(gd, plotinfo, cdbox) {
                         Math.min(q1, q3) + 1, Math.max(q1, q3) - 1),
                     lf = valAxis.c2p(trace.boxpoints === false ? d.min : d.lf, true),
                     uf = valAxis.c2p(trace.boxpoints === false ? d.max : d.uf, true);
+
                 if(trace.orientation === 'h') {
                     d3.select(this).attr('d',
                         'M' + m + ',' + pos0 + 'V' + pos1 + // median line
@@ -111,8 +193,11 @@ module.exports = function plot(gd, plotinfo, cdbox) {
                         'M' + posc + ',' + q1 + 'V' + lf + 'M' + posc + ',' + q3 + 'V' + uf + // whiskers
                         ((trace.whiskerwidth === 0) ? '' : // whisker caps
                             'M' + posw0 + ',' + lf + 'H' + posw1 + 'M' + posw0 + ',' + uf + 'H' + posw1));
-                }
+                }              
+
             });
+
+       
 
         // draw points, if desired
         if(trace.boxpoints) {

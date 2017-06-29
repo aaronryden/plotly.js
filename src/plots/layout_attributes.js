@@ -169,5 +169,20 @@ module.exports = {
         valType: 'boolean',
         role: 'info',
         description: 'Determines whether or not a legend is drawn.'
-    }
+    },
+    bottomColor: {
+        valType: 'color',
+        role: 'style',
+        dflt: '',
+    },
+    topColor: {
+        valType: 'color',
+        role: 'style',
+        dflt: '',
+    },
+    medianColor: {
+        valType: 'color',
+        role: 'style',
+        dflt: '',
+    },
 };
