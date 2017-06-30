@@ -174,5 +174,19 @@ module.exports = {
             description: 'Sets the width (in px) of line bounding the box(es).'
         }
     },
-    fillcolor: scatterAttrs.fillcolor
+    fillcolor: scatterAttrs.fillcolor,
+    markerOverrideValue: {
+        valType: 'number',
+        dflt: null,
+    },
+    showMedian: {
+        valType: 'boolean',
+        dflt: false,
+    },
+    medianLabelOverride: {
+        valType: 'string',
+        role: 'style',
+        dflt: null,
+    },
 };
+

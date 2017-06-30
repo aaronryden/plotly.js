@@ -45,6 +45,9 @@ module.exports = function supplyDefaults(traceIn, traceOut, defaultColor, layout
 
     coerce('whiskerwidth');
     coerce('boxmean');
+    coerce('showMedian');
+    coerce('medianLabelOverride');
+    coerce('markerOverrideValue');
 
     var outlierColorDflt = Lib.coerce2(traceIn, traceOut, attributes, 'marker.outliercolor'),
         lineoutliercolor = coerce('marker.line.outliercolor'),

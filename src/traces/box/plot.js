@@ -142,6 +142,13 @@ module.exports = function plot(gd, plotinfo, cdbox) {
             lf = valAxis.c2p(trace.boxpoints === false ? d.min : d.lf, true),
             uf = valAxis.c2p(trace.boxpoints === false ? d.max : d.uf, true);
             var STAR_WIDTH = 6;
+           
+
+            if(trace.markerOverrideValue !== null || trace.markerOverrideValue !== undefined) {
+              m = Lib.constrain(valAxis.c2p(d.markerOverrideValue, true),
+                Math.min(q1, q3) + 1, Math.max(q1, q3) - 1); 
+            }
+
             var middle = pos0 + ((pos1 - pos0) / 2);
             var topX = middle;
             var topY = m - STAR_WIDTH;
@@ -156,6 +163,45 @@ module.exports = function plot(gd, plotinfo, cdbox) {
               'M' + leftX + ',' + leftY + 'L' + topX + ',' + topY + 'L' + rightX + ',' + rightY + 'L' + bottomX + ',' + bottomY + 'L' + leftX + ',' + leftY
               ).style('fill', fullLayout.medianColor)
               .style('stroke', fullLayout.medianColor);
+        });
+
+        d3.select(this).selectAll('path.box')
+        .data(Lib.identity)
+        .enter()
+        .append('text').each(function(d) {
+            var posc = posAxis.c2p(d.pos + bPos, true),
+            pos0 = posAxis.c2p(d.pos + bPos - bdPos, true),
+            pos1 = posAxis.c2p(d.pos + bPos + bdPos, true),
+            posw0 = posAxis.c2p(d.pos + bPos - wdPos, true),
+            posw1 = posAxis.c2p(d.pos + bPos + wdPos, true),
+            q1 = valAxis.c2p(d.q1, true),
+            q3 = valAxis.c2p(d.q3, true),
+            // make sure median isn't identical to either of the
+            // quartiles, so we can see it
+            m = Lib.constrain(valAxis.c2p(d.med, true),
+                Math.min(q1, q3) + 1, Math.max(q1, q3) - 1),
+            lf = valAxis.c2p(trace.boxpoints === false ? d.min : d.lf, true),
+            uf = valAxis.c2p(trace.boxpoints === false ? d.max : d.uf, true);
+
+            var STAR_WIDTH = 6;
+            var middle = pos0 + ((pos1 - pos0) / 2);
+            var topX = middle;
+            var topY = m - STAR_WIDTH;
+            var rightX = middle + STAR_WIDTH;
+            var rightY = m;
+            var bottomX = middle;
+            var bottomY = m + STAR_WIDTH;
+            var leftX = middle - STAR_WIDTH;
+            var leftY = m;
+
+            if (trace.showMedian === true) {
+                d3.select(this)
+                    .attr('x', pos1 + 10)
+                    .attr('y', m)
+                    .attr('dy', '.3em')
+                    .style('fill', fullLayout.medianColor)
+                    .text(trace.medianLabelOverride || d.med.toFixed(1) + '%');
+            }
         });
 
         // boxes and whiskers
